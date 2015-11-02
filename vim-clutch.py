@@ -3,9 +3,10 @@
 import asyncore
 import evdev
 import signal
+import re
 
 #Stores the product names for each device which can be used as a vim-clutch.
-COMPATIBLE_NAMES = ["RDing FootSwitchV1.1"]
+COMPATIBLE_NAME_REGEX = "RDing FootSwitch.*";
 
 #
 # Advanced "configuration"
@@ -16,6 +17,7 @@ def press_handler(output_device, input_device, event):
         Pedal-press handler.
         This function is called whenever the VIM clutch-pedal is pushed.
     """
+
     send_keypress(output_device, 'KEY_ESC')
     send_keypress(output_device, 'KEY_I')
 
@@ -131,7 +133,7 @@ def compatible_devices():
     devices = [evdev.InputDevice(d) for d in evdev.list_devices()]
 
     #Filter the device list so it only includes clutch-compatible foot switches.
-    return [d for d in devices if d.name in COMPATIBLE_NAMES]
+    return [d for d in devices if re.match(COMPATIBLE_NAME_REGEX, d.name)]
 
 
 
